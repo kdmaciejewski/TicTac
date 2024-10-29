@@ -8,7 +8,7 @@ import { useState } from "react";
 import JoinGame from "./components/JoinGame";
 
 function App() {
-  const api_key = "kdqzbxhbm56s";
+  const api_key = "842k9artxzb2";
   const cookies = new Cookies();
   const token = cookies.get("token");
   const client = StreamChat.getInstance(api_key);
@@ -34,14 +34,13 @@ function App() {
           name: cookies.get("username"),
           firstName: cookies.get("firstName"),
           lastName: cookies.get("lastName"),
-          hashedPassword: cookies.get("hashedPassword"),
         },
         token
       )
-      .then((user) => {
-        setIsAuth(true);
-      });
+      .then(() => setIsAuth(true))
+      .catch((err) => console.log("Token authentication error:", err));
   }
+
   return (
     <div className="App">
       {isAuth ? (
