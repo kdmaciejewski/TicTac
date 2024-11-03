@@ -1,62 +1,25 @@
-import React, { useState } from "react";
-import Axios from "axios";
-import { CognitoUserPool, CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
-import Cookies from "universal-cookie";
-
+import React from "react";
+import { CognitoUserPool } from "amazon-cognito-identity-js";
 
 const poolData = {
-    UserPoolId: process.env.COGNITO_USER_POOL_ID,
-    ClientId: process.env.COGNITO_CLIENT_ID
+  UserPoolId: 'us-east-1_QoiXTAHEw',
+  ClientId: '3ijg7078a9lf88kinp193l86dv'
 };
 
 const userPool = new CognitoUserPool(poolData);
 
 function SignUp({ setIsAuth }) {
-  const cookies = new Cookies();
-  const [user, setUser] = useState(null);
+  const redirectToSignUp = () => {
+    const redirectUri = encodeURIComponent("http://localhost:3000"); // Your app's redirect URI
+    const signUpUrl = `https://tiktak.auth.us-east-1.amazoncognito.com/signup?response_type=code&client_id=${poolData.ClientId}&redirect_uri=${redirectUri}`;
 
-  const signUp = () => {
-    Axios.post("http://localhost:3001/signup", user).then((res) => {
-      const { token, userId, firstName, lastName, username, hashedPassword } =
-        res.data;
-      cookies.set("token", token);
-      cookies.set("userId", userId);
-      cookies.set("username", username);
-      cookies.set("firstName", firstName);
-      cookies.set("lastName", lastName);
-      cookies.set("hashedPassword", hashedPassword);
-      setIsAuth(true);
-    });
+    window.location.href = signUpUrl; // Redirect to Cognito hosted UI sign-up page
   };
+
   return (
     <div className="signUp">
-      <label> Sign Up</label>
-      <input
-        placeholder="First Name"
-        onChange={(event) => {
-          setUser({ ...user, firstName: event.target.value });
-        }}
-      />
-      <input
-        placeholder="Last Name"
-        onChange={(event) => {
-          setUser({ ...user, lastName: event.target.value });
-        }}
-      />
-      <input
-        placeholder="Username"
-        onChange={(event) => {
-          setUser({ ...user, username: event.target.value });
-        }}
-      />
-      <input
-        placeholder="Password"
-        type="password"
-        onChange={(event) => {
-          setUser({ ...user, password: event.target.value });
-        }}
-      />
-      <button onClick={signUp}> Sign Up</button>
+      <label style={{ fontSize: '60px' }}> Sign Up</label>
+      <button onClick={redirectToSignUp}> Sign Up with Cognito</button>
     </div>
   );
 }

@@ -1,46 +1,28 @@
-import React, { useState } from "react";
-import Axios from "axios";
+import React from "react";
 import Cookies from "universal-cookie";
 
-function Login({ setIsAuth }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+function Login({setIsAuth}) {
+    const cookies = new Cookies();
 
-  const cookies = new Cookies();
-  const login = () => {
-    Axios.post("http://localhost:3001/login", {
-      username,
-      password,
-    }).then((res) => {
-      const { firstName, lastName, username, token, userId } = res.data;
-      cookies.set("token", token);
-      cookies.set("userId", userId);
-      cookies.set("username", username);
-      cookies.set("firstName", firstName);
-      cookies.set("lastName", lastName);
-      setIsAuth(true);
-    });
-  };
-  return (
-    <div className="login">
-      <label> Login</label>
+    // Redirect to the AWS Cognito login page
+    const redirectToLogin = () => {
+        const cognitoDomain = "tiktak.auth.us-east-1.amazoncognito.com"; // Update with your Cognito domain
+        const clientId = "3ijg7078a9lf88kinp193l86dv"; // Your Cognito Client ID
+        const redirectUri = "https://localhost:3000"; // Your redirect URI after login
 
-      <input
-        placeholder="Username"
-        onChange={(event) => {
-          setUsername(event.target.value);
-        }}
-      />
-      <input
-        placeholder="Password"
-        type="password"
-        onChange={(event) => {
-          setPassword(event.target.value);
-        }}
-      />
-      <button onClick={login}> Login</button>
-    </div>
-  );
+        // const loginUrl = `https://${cognitoDomain}/login?response_type=token&client_id=${clientId}&redirect_uri=${redirectUri}`;
+        const loginUrl = 'https://tiktak.auth.us-east-1.amazoncognito.com/login?response_type=code&' +
+            'client_id=3ijg7078a9lf88kinp193l86dv&redirect_uri=http://localhost:3000';
+
+        window.location.href = loginUrl; // Redirect to the login page
+    };
+
+    return (
+        <div className="login">
+            <label style={{fontSize: '60px'}}> Login</label>
+            <button onClick={redirectToLogin}> Login with Cognito</button>
+        </div>
+    );
 }
 
 export default Login;

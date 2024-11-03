@@ -2,18 +2,17 @@
 import pool from "../db.js";
 
 class User {
-  constructor(userId, username, hashedPassword, firstName, lastName) {
+  constructor(userId, username, email, password) {
     this.userId = userId;
     this.username = username;
-    this.hashedPassword = hashedPassword;
-    this.firstName = firstName;
-    this.lastName = lastName;
+    this.email = email;
+    this.password = password;
   }
 
-  static async create({ userId, username, hashedPassword, firstName, lastName }) {
+  static async create({ userId, username, email, password}) {
     const result = await pool.query(
-      "INSERT INTO Users (userId, username, hashedPassword, firstName, lastName) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [userId, username, hashedPassword, firstName, lastName]
+      "INSERT INTO Users (userId, username, email, password) VALUES ($1, $2, $3, $4) RETURNING *",
+      [userId, username, email, password]
     );
     return new User(result.rows[0]);
   }
@@ -22,7 +21,7 @@ class User {
     const result = await pool.query("SELECT * FROM Users WHERE username = $1", [username]);
     if (result.rows.length > 0) {
       const user = result.rows[0];
-      return new User(user.userId, user.username, user.hashedPassword, user.firstName, user.lastName);
+      return new User(user.userId, user.username, user.email, user.password);
     }
     return null;
   }

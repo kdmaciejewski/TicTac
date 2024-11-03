@@ -3,24 +3,23 @@ const { Pool } = pkg;
 
 
 // Create a pool for database connections
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'tictactoe',
-  password: 'Maciejewski12',
-  port: 5432, // Default PostgreSQL port
-});
+// const pool = new Pool({
+//     host: 'database-2.cluster-c16ejl6j0lwa.us-east-1.rds.amazonaws.com',
+//     user: 'postgres',
+//     password: 'postgres',
+//     database: 'postgres',
+//     port: 5432, // Default PostgreSQL port
+// });
 
-export async function createDatabaseSchema() {
+export async function createDatabaseSchema(pool) {
     const client = await pool.connect();
     try {
         await client.query(`
             CREATE TABLE IF NOT EXISTS Users (
                 userId UUID PRIMARY KEY,
                 username VARCHAR(50) UNIQUE NOT NULL,
-                hashedPassword VARCHAR(255) NOT NULL,
-                firstName VARCHAR(50) NOT NULL,
-                lastName VARCHAR(50) NOT NULL
+                email VARCHAR(100) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL
             );
         `);
 
@@ -44,4 +43,5 @@ export async function createDatabaseSchema() {
 
 
 // Export the pool and the schema creation function
-export default { pool, createDatabaseSchema };
+// export default { pool, createDatabaseSchema };
+export default { createDatabaseSchema };
